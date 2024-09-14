@@ -1,0 +1,9 @@
+appium-python-client==2.10.0  # Ensure you have the correct version of the Appium Python client
+pytest==7.2.2                # For running the tests
+pytest-html==3.1.1           # To generate HTML reports using pytest
+allure-pytest==2.9.45        # Optional: for generating Allure reports
+webdriver-manager==4.0.0     # Manages WebDriver binaries
+selenium==4.9.1         # Selenium for interacting with web elements (in case it's needed)
+pandas==2.0.3                # For handling CSV file operations
+py==1.11.0                   # You can specify the latest version or any other compatible version
+
