@@ -21,8 +21,6 @@ def get_driver():
     options.automation_name = "UiAutomator2"
     options.no_reset = True  # To keep the app in the same state after the session
     options.new_command_timeout = 300
-    #mCurrentFocus=Window{7e238d8 u0 com.showtimeapp/com.pocketaces.ivory.view.activities.SplashActivity}
-
     # Return the Appium driver with only `options`
     return webdriver.Remote('http://localhost:4723', options=options)
 

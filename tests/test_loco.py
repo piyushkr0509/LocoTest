@@ -26,11 +26,7 @@ class TestLoco():
 		# Create an instance of LoginPage
 		login_page = LoginPage(self.driver)
 		orientation = self.driver.orientation
-
-		# Assert that the volume is zero (i.e., muted)
-
 #        helpers.capture_screenshot_and_extract_text(self.driver, "after_login_attempt", "texts")
-
 		# Perform login using methods from the LoginPage class
 		login_page.click_streaming()
 		assert login_page.is_live_successful()
@@ -54,28 +50,9 @@ class TestLoco():
 	def test_MediaPlayerNegative(self):
 			# Create an instance of LoginPage
 			login_page = LoginPage(self.driver)
-
-
-
 			#        helpers.capture_screenshot_and_extract_text(self.driver, "after_login_attempt", "texts")
-
 			# Perform login using methods from the LoginPage class
 			#login_page.click_streaming()
 			Helpers.enable_airplane_mode()
 			network_status = driver.network_connection
 			assert network_status == 1, f"Expected Airplane mode ON, but got {network_status}"
-			# assert login_page.is_live_successful()
-
-
-# Parse the device_info to see if there's any indication of media playing/paused
-		# Parse the system_bars information to see if any media control is shown
-
-		# Use the Helpers class to take screenshot and extract text
-
-
-		# Assert login success by checking if "Trending" appears in the page source
-		#assert login_page.is_login_successful()
-
-
-#To automate testing for a video player, both positive and negative test cases should cover aspects such as basic functionality, UI interactions, error handling, and performance. Here’s a detailed set of test cases:
-
