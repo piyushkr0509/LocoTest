@@ -90,3 +90,19 @@ class LoginPage:
 
     def mute_audio(self):
         WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable(self.mute_button)).click()
+
+    def spam_forward_time(self, num_taps):
+        """
+        Repeatedly taps the forward button to simulate excessive tapping for negative testing.
+
+        :param num_taps: The number of times to tap the forward button (default: 10)
+        """
+        WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable(self.player_view)).click()
+
+        for _ in range(num_taps):
+            try:
+                WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable(self.forward_seconds)).click()
+                print(f"Tapped forward {_ + 1} times")
+            except Exception as e:
+                print(f"Error occurred on tap {_ + 1}: {str(e)}")
+                break
