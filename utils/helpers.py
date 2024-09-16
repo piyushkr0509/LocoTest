@@ -61,9 +61,9 @@ class Helpers:
         elif len(parts) == 3:  # hh:mm:ss
             return parts[0] * 3600 + parts[1] * 60 + parts[2]
 
-    def enable_airplane_mode(self, driver):
+    def enable_airplane_mode(self,driver,condition):
         # Toggle the airplane mode ON
-        driver.set_network_connection(1)  # 1 stands for Airplane mode (all off)
+        driver.set_network_connection(condition)  # 1 stands for Airplane mode (all off)
 
         # Verify if Airplane mode is enabled (Optional)
 

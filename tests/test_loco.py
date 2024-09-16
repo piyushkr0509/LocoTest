@@ -1,58 +1,91 @@
 import pytest
-from webdriver_manager.core import driver
-
 from config.capabilities import get_driver
 from pages.login_page import LoginPage
-from utils import helpers  # Import the Helpers class
 from utils.helpers import Helpers
 
 
-class TestLoco():
+class TestLoco:
 
-	@pytest.fixture(scope="class", autouse=True)
-	def setup(self, request):
-		# Initialize the driver and assign it to a class variable
-		driver = get_driver()
-		request.cls.driver = driver
+    @pytest.fixture(scope="class", autouse=True)
+    def setup(self, request):
+        """
+        Setup method to initialize the driver before the tests and quit it after.
+        """
+        driver = get_driver()  # Get the driver from capabilities
+        request.cls.driver = driver
 
-		# Teardown: Quit the driver and stop Appium after tests complete
-		def teardown():
-			if driver:
-				driver.quit()
+        def teardown():
+            """
+            Teardown method to quit the driver after the tests are complete.
+            """
+            if driver:
+                driver.quit()
 
-		request.addfinalizer(teardown)
+        request.addfinalizer(teardown)
 
-	def test_MediaPlayerPositive(self):
-		# Create an instance of LoginPage
-		login_page = LoginPage(self.driver)
-		orientation = self.driver.orientation
-#        helpers.capture_screenshot_and_extract_text(self.driver, "after_login_attempt", "texts")
-		# Perform login using methods from the LoginPage class
-		login_page.click_streaming()
-		assert login_page.is_live_successful()
-		login_page.click_live_content()
-		login_page.pausePlay_player()
-		assert login_page.isVideo_paused()
-		login_page.click_golive()
-		login_page.forward_time()
-		Helpers.assert_time_difference_by_10_seconds()
-		login_page.reverse_time()
-		Helpers.assert_time_difference_by_10_seconds()
-		login_page.toggle_maxScreen()
-		assert orientation == "LANDSCAPE", f"Expected device to be in landscape mode, but it is in {orientation} mode."
-		login_page.toggle_maxScreen()
-		assert orientation == "PORTRAIT", f"Expected device to be in portrait mode, but it is in {orientation} mode."
-		login_page.mute_audio()
-		assert Helpers.is_audio_muted(self)
-		login_page.mute_audio()
-		assert not Helpers.is_audio_muted(self)
+    def test_MediaPlayerPositive(self):
+        """
+        Test to verify positive cases for the media player functionality.
+        """
+        # Initialize LoginPage object
+        login_page = LoginPage(self.driver)
 
-	def test_MediaPlayerNegative(self):
-			# Create an instance of LoginPage
-			login_page = LoginPage(self.driver)
-			#        helpers.capture_screenshot_and_extract_text(self.driver, "after_login_attempt", "texts")
-			# Perform login using methods from the LoginPage class
-			#login_page.click_streaming()
-			Helpers.enable_airplane_mode()
-			network_status = driver.network_connection
-			assert network_status == 1, f"Expected Airplane mode ON, but got {network_status}"
+        # Save the initial orientation of the device
+        initial_orientation = self.driver.orientation
+
+        # Navigate through the media player functionalities
+        login_page.click_streaming()
+        assert login_page.is_live_successful(), "Live streaming failed to start."
+
+        login_page.click_live_content()
+
+        # Pause and verify the video is paused
+        login_page.pausePlay_player()
+        assert login_page.isVideo_paused(), "Video is not paused."
+
+        # Resume playback and verify it resumes
+        login_page.click_golive()
+
+        # Verify forwarding the video by 10 seconds
+        login_page.forward_time()
+        Helpers.assert_time_difference_by_10_seconds(self.driver, "forward")
+
+        # Verify reversing the video by 10 seconds
+        login_page.reverse_time()
+        Helpers.assert_time_difference_by_10_seconds(self.driver, "reverse")
+
+        # Toggle fullscreen mode and verify the orientation is landscape
+        login_page.toggle_maxScreen()
+        assert self.driver.orientation == "LANDSCAPE", f"Expected landscape mode, but got {self.driver.orientation}."
+
+        # Toggle back to portrait mode and verify
+        login_page.toggle_maxScreen()
+        assert self.driver.orientation == "PORTRAIT", f"Expected portrait mode, but got {self.driver.orientation}."
+
+        # Mute the audio and verify it is muted
+        login_page.mute_audio()
+        assert Helpers.is_audio_muted(self.driver), "Audio is not muted."
+
+        # Unmute the audio and verify it is unmuted
+        login_page.mute_audio()
+        assert not Helpers.is_audio_muted(self.driver), "Audio is still muted."
+
+    def test_MediaPlayerNegative(self):
+        """
+        Test to verify negative cases, such as network issues, for the media player.
+        """
+        # Initialize LoginPage object
+        login_page = LoginPage(self.driver)
+
+        # Enable airplane mode to simulate network disconnection
+        Helpers.enable_airplane_mode(self.driver,1)
+
+        # Get the current network connection status
+        network_status = self.driver.network_connection
+
+        # Assert that airplane mode is enabled (network connection should be 1)
+        assert network_status == 1, f"Expected Airplane mode ON, but got {network_status}."
+
+        # Try to interact with the video player and verify that actions fail due to network issues
+        with pytest.raises(Exception, match="No network connection"):
+            login_page.click_live_content()
