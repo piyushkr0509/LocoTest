@@ -77,6 +77,9 @@ class TestLoco:
         # Initialize LoginPage object
         login_page = LoginPage(self.driver)
 
+        login_page.spam_forward_time(10)
+        assert login_page.is_live_successful(), "Live streaming failed to start."
+
         # Enable airplane mode to simulate network disconnection
         Helpers.enable_airplane_mode(self.driver,1)
 
